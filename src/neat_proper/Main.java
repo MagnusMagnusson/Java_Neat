@@ -2,6 +2,7 @@ package neat_proper;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello World!"); // Display the string.
+        God lord = God.instance();
+        System.out.println(lord.test()); // Display the string.
     }
 }
