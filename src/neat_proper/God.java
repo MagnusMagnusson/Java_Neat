@@ -40,9 +40,9 @@ public class God {
 		return innovation_number;
 	}
 	
-	public int new_innovation(){
-		innovation_number++;
-		return innovation_number;
+	public int new_innovation(Pool pool){
+		pool.innovation_number++;
+		return pool.innovation_number;
 	}
 	
 	private God(){
