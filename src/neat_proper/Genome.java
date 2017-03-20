@@ -57,9 +57,55 @@ public class Genome {
     	 basic.mutate();
     	 return basic;
      }
-    public void mutate(){	 
-    	
+    public void mutate(){
+    		mutation_connection *= (Math.random() < 0.5) ? 0.95 : 1.05;
+    		mutation_link *= (Math.random() < 0.5) ? 0.95 : 1.05;
+    		mutation_bias *= (Math.random() < 0.5) ? 0.95 : 1.05;
+    		mutation_node *= (Math.random() < 0.5) ? 0.95 : 1.05;
+    		mutation_enable *= (Math.random() < 0.5) ? 0.95 : 1.05;
+    		mutation_disable *= (Math.random() < 0.5) ? 0.95 : 1.05;
+    		mutation_step *= (Math.random() < 0.5) ? 0.95 : 1.05;
+    		if(Math.random() < mutation_connection){
+    			mutate_point();
+    		}
+    		float p = mutation_link;
+    		while (p > 0){
+    			if(Math.random() < p){
+    				mutate_link(false);
+    			}
+    			p = p - 1;
+    		}
+    		p = mutation_bias;
+    		while(p > 0){
+    			if(Math.random() < p){
+    				mutate_link(true);
+    			}
+    			p = p - 1;
+    		}
+    		p = mutation_node;
+    		while(p > 0){
+    			if(Math.random() < p){
+    				mutate_node();
+    			}
+    			p = p - 1;
+    		}
+    		p = mutation_enable;
+    		while(p > 0){
+    			if(Math.random() < p){
+    				mutate_enable_disable(true);
+    			}
+    			p = p - 1;
+    		}
+    		
+    		p = mutation_disable;
+    		while(p > 0){
+    			if(Math.random() < p){
+    				mutate_enable_disable(false);
+    			}
+    			p = p -1;
+    		}
     }
+    
     public void generateNetwork(){
 		Network net = new Network();
 		God god = God.instance();
@@ -198,6 +244,7 @@ public class Genome {
 	}
 	
 	public void mutate_node(){
+		God god = God.instance();
 		if(genes.isEmpty()){
 			return;
 		}
@@ -208,22 +255,28 @@ public class Genome {
 		}
 		gene.enabled = false;
 		Gene newGene = gene.copy();
+		newGene.out = maxneuron;
+		newGene.weight = 1;
+		newGene.innovation = god.new_innovation(god.currentPool);
+		newGene.enabled = true;
+		genes.add(newGene);
 		
-		/*
- 
-       
-        local gene1 = copyGene(gene)
-        gene1.out = genome.maxneuron
-        gene1.weight = 1.0
-        gene1.innovation = newInnovation()
-        gene1.enabled = true
-        table.insert(genome.genes, gene1)
-       
-        local gene2 = copyGene(gene)
-        gene2.into = genome.maxneuron
-        gene2.innovation = newInnovation()
-        gene2.enabled = true
-        table.insert(genome.genes, gene2)
-end*/
+		Gene newGene2 = gene.copy();
+		newGene2.into = maxneuron;
+		newGene2.innovation = god.new_innovation(god.currentPool);
+		newGene2.enabled = true;
+		genes.add(newGene2);
 	}
+	
+	public void mutate_enable_disable(Boolean enabled){
+		List<Gene> candidate = new ArrayList<Gene>();
+		for(Gene gene: genes){
+			if(gene.enabled == !enabled){
+				candidate.add(gene);
+			}
+		}
+		Gene G = candidate.get((int)(Math.random() * candidate.size()));
+		G.enabled = !G.enabled;
+	}
+	
 }
