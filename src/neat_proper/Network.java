@@ -1,5 +1,10 @@
 package neat_proper;
 
-public class Network {
+import java.util.*;
 
+public class Network {
+	List<Neuron> neurons;
+	public Network(){
+		neurons = new ArrayList<Neuron>();
+	}
 }
