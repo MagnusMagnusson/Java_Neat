@@ -7,8 +7,8 @@ public class God {
 	public static God me;
 	public int input_size;
 	public int output_size;
-	public List<Boolean> inputs;
-	public List<Boolean> outputs;
+	public List<Integer> inputs;
+	public List<Integer> outputs;
 	public int population;
 	public float deltaDistjoint;
 	public float deltaWeight;
@@ -62,13 +62,13 @@ public class God {
 		input_size = 7;
 		output_size = 3;
 
-		inputs = new ArrayList<Boolean>();
-		outputs = new ArrayList<Boolean>();
+		inputs = new ArrayList<Integer>();
+		outputs = new ArrayList<Integer>();
 		for(int i = 0; i < input_size;i++){
-			inputs.add(false);
+			inputs.add(0);
 		}
 		for(int i = 0; i < output_size;i++){
-			outputs.add(false);
+			outputs.add(0);
 		}
 		population = 300;
 		deltaDistjoint = 2;
@@ -87,4 +87,9 @@ public class God {
 		timeOut = 20;
 		max_nodes = 1000000;
 	}
+
+	public static float sigma(float x){
+		return (float)(2/(1+Math.exp(-4.9*x))-1);
+    }
+
 }

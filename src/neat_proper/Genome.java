@@ -65,35 +65,27 @@ public class Genome {
 		Network net = new Network();
 		God god = God.instance();
 		for(int i = 0; i < god.input_size;i++){
-			net.neurons.add(new Neuron());
+			net.neurons.put(i, new Neuron());
 		}
-		for(int i = 0; i < god.output_size;i++){
-			net.neurons.add(new Neuron());
+		for(int i = 1; i < 1+god.output_size;i++){
+			net.neurons.put(god.max_nodes + i, new Neuron());
 		}
+		
 		genes.sort(null);
+		
 		for(Gene gene: genes){
 			if(gene.enabled){
 				if(net.neurons.get(gene.out) == null){
-					net.neu
+					net.neurons.put(gene.out, new Neuron());
+				}
+				Neuron n = net.neurons.get(gene.out);
+				n.incoming.add(gene);
+				if(net.neurons.get(gene.into) == null){
+					net.neurons.put(gene.into, new Neuron());
 				}
 			}
 		}
-		/* 
-        for i=1,#genome.genes do
-                local gene = genome.genes[i]
-                if gene.enabled then
-                        if network.neurons[gene.out] == nil then
-                                network.neurons[gene.out] = newNeuron()
-                        end
-                        local neuron = network.neurons[gene.out]
-                        table.insert(neuron.incoming, gene)
-                        if network.neurons[gene.into] == nil then
-                                network.neurons[gene.into] = newNeuron()
-                        end
-                end
-        end
-       
-        genome.network = network*/
+		network = net;
 	};
 	
 }

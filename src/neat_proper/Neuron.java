@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Neuron {
     List<Gene> incoming;
-    int value;
+    float value;
     
     public Neuron(){
     	incoming = new ArrayList<Gene>();

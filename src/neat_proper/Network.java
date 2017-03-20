@@ -3,8 +3,45 @@ package neat_proper;
 import java.util.*;
 
 public class Network {
-	List<Neuron> neurons;
+	Map<Integer,Neuron> neurons;
 	public Network(){
-		neurons = new ArrayList<Neuron>();
+		neurons = new TreeMap<Integer,Neuron>();
+	}
+	
+	public List<Integer> evaluate(List<Integer> inputs){
+		inputs.add(1);
+		God god = God.instance();
+		if(inputs.size() != god.input_size + 1){
+			System.out.println("Error: Neural network recieved the wrong number of inputs.");
+			return new ArrayList<Integer>();
+		}
+		
+		for(int i = 0; i < god.input_size + 1; i++){
+			neurons.get(i).value = inputs.get(i);
+		}
+		Set<Integer> keys = neurons.keySet();
+		for(Integer k: keys){
+			Neuron neuron = neurons.get(k);
+			float sum = 0;
+			for(int j = 0; j < neuron.incoming.size(); j++){
+				Gene incoming = neuron.incoming.get(j);
+				Neuron other = neurons.get(incoming.into);
+				sum += incoming.weight * other.value;
+			}
+			if(neuron.incoming.size() > 0){
+				neuron.value = God.sigma(sum);
+			}
+		}
+		
+		List<Integer> out = new ArrayList<Integer>();
+		for(int i = 1; i < god.output_size+1; i++){
+			if(neurons.get(god.output_size + i).value > 0){
+				out.add(1);
+			}
+			else{
+				out.add(0);
+			}
+		}
+		return out;
 	}
 }
