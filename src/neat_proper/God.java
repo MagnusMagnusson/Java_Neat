@@ -25,6 +25,7 @@ public class God {
 	public float mutate_enable_chance;
 	public float timeOut;
 	public int max_nodes;
+	Pool currentPool;
 	
 	public static God instance(){
 		if(me == null){
@@ -86,6 +87,7 @@ public class God {
 		mutate_enable_chance = 0.2f;
 		timeOut = 20;
 		max_nodes = 1000000;
+		currentPool = new_pool();
 	}
 
 	public static float sigma(float x){
