@@ -59,6 +59,21 @@ public class God {
 		return new Genome();
 	}
 	
+	public void init_pool(){
+		Pool p = new_pool();
+		for(int i = 0; i < population; i++){
+			Genome g = Genome.basic_genome();
+			p.addToSpecies(g);
+		}
+		currentPool = p;
+	}
+	
+	
+	public void evaluate(Genome genome){
+		
+	}
+	
+	
 	private God(){	
 		input_size = 7;
 		output_size = 3;
@@ -93,5 +108,6 @@ public class God {
 	public static float sigma(float x){
 		return (float)(2/(1+Math.exp(-4.9*x))-1);
     }
+	
 
 }
