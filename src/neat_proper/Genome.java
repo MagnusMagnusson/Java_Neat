@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Genome {
      List<Gene> genes;
-     int fitness;
+     float fitness;
      int adjustedFitness;
      Network network;
      int maxneuron;
@@ -200,7 +200,7 @@ public class Genome {
 	}
 	public Boolean contains_gene(Gene g){
 		for(Gene gene: genes){
-			if(gene.into == g.into && gene.out == link.out){
+			if(gene.into == g.into && gene.out == g.out){
 				return true;
 			}
 		}
@@ -279,4 +279,59 @@ public class Genome {
 		G.enabled = !G.enabled;
 	}
 	
+	public float distjoint(Genome other){
+		Integer distjoint = 0;
+		
+		Map<Integer, Boolean> dg1= new TreeMap<Integer,Boolean>();
+		Map<Integer, Boolean> dg2= new TreeMap<Integer,Boolean>();
+		
+		for(Gene gene: other.genes){
+			dg2.put(gene.innovation, true);
+		}
+		
+		for(Gene gene: other.genes){
+			dg1.put(gene.innovation, true);
+		}
+		for(Gene gene: genes){
+			if(dg2.get(gene.innovation) == null){
+				distjoint++;
+			}
+		}
+		for(Gene gene: other.genes){
+			if(dg1.get(gene.innovation) == null){
+				distjoint++;
+			}
+		}
+		float n = Math.max(genes.size(),other.genes.size());
+		return ((float)distjoint)/n;
+	}
+	
+	float weights(Genome other){
+		Map<Integer, Gene> dg1= new TreeMap<Integer,Gene>();
+		Map<Integer, Gene> dg2= new TreeMap<Integer,Gene>();
+		for(Gene gene: other.genes){
+			dg2.put(gene.innovation,gene);
+		}
+		float sum = 0;
+		float coincident = 0;
+		
+		for(Gene gene: genes){
+			if(dg1.get(gene.innovation) != null){
+				Gene gene2 = dg1.get(gene.innovation);
+				sum += Math.abs(gene.weight - gene2.weight);
+				coincident++;
+			}
+		}
+		if(coincident == 0){
+			return 0;
+		}
+		return sum/coincident;
+	}
+	
+	Boolean same_species(Genome other){
+		God god = God.instance();
+		float dd = god.deltaDistjoint * distjoint(other);
+		float dw = god.deltaWeight * weights(other);
+		return dd+dw < god.deltaThreshhold;
+	}
 }
