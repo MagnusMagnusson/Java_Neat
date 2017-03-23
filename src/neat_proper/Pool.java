@@ -65,7 +65,7 @@ public class Pool {
         
         for(Species s: species){
         	s.genomes.sort(new ReverseGenomeSort());
-        	if(s.genomes.get(0).fitness > s.top_fitness){
+        	if(s.genomes.size() > 0 && s.genomes.get(0).fitness > s.top_fitness){
         		s.top_fitness = s.genomes.get(0).fitness;
         		s.staleness = 0;
         	}
@@ -86,7 +86,7 @@ public class Pool {
         
         float sum = totalAverageFitness();
         for(Species s: species){
-        	float breed = (float)Math.floor(s.average_fitness / (sum * God.instance().population));
+        	float breed = (float)Math.floor((s.average_fitness / sum) * God.instance().population);
         	if(breed > 1){
         		newSpecies.add(s);
         	}
@@ -112,6 +112,13 @@ public class Pool {
     }
     
     public void newGeneration(){
+    	System.out.println("--------------Generation " + generation + " has concluded--------------");
+    	System.out.println("Species: " + species.size());
+    	System.out.println("Max fitness: " + max_fitness);
+    	System.out.println("Average species fitness: " + (totalAverageFitness() / species.size()));
+    	System.out.println("...generating new generation...");
+    	max_fitness = 0;
+    	
     	cullSpecies(false);
     	rankSpecies();
     	removeStale();
@@ -138,6 +145,11 @@ public class Pool {
     	for(Genome g: newBorns){
     		addToSpecies(g);
     	}
+    	int number = 0;
+    	for(Species s: species){
+    		number += s.genomes.size();
+    	}
+    	System.out.println("next gneration genomes: " + number);
     	generation++;
     	System.out.println("generation " + generation + " has been born!");
     }

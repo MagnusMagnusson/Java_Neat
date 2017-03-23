@@ -1,5 +1,6 @@
 package neat_proper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ public class God {
 	public int input_size;
 	public int output_size;
 	public List<Integer> inputs;
-	public List<Integer> outputs;
+	public List<Float> outputs;
 	public int population;
 	public float deltaDistjoint;
 	public float deltaWeight;
@@ -30,6 +31,7 @@ public class God {
 	public static God instance(){
 		if(me == null){
 			me = new God();
+			me.init_pool();
 		}
 		return me;
 	}
@@ -66,25 +68,62 @@ public class God {
 			p.addToSpecies(g);
 		}
 		currentPool = p;
+		System.out.println("Generated basic pool with " + p.species.size() + " species");
 	}
 	
 	
 	public void evaluate(Genome genome){
-		
+		int sum = 0;
+		for(int i = 0; i < 256; i++){
+			int total = 0;
+			inputs.clear();
+			inputs.add(i & 1);
+			inputs.add((i & 2) > 0 ? 1 : 0 );
+			inputs.add((i & 4) > 0 ? 1 : 0 );
+			inputs.add((i & 8) > 0 ? 1 : 0 );
+			inputs.add((i & 16) > 0 ? 1 : 0);
+			inputs.add((i & 32) > 0 ? 1 : 0);
+			inputs.add((i & 64) > 0 ? 1 : 0);
+			inputs.add((i & 128) > 0 ? 1 : 0);
+			for(int j = 0; j < 8; j++){
+				total += (i & (int)Math.pow(2, j)) > 0 ? 1 : 0;
+			}
+			outputs = genome.network.evaluate(inputs);
+			float S = outputs.get(0) + outputs.get(1)*2 +  outputs.get(2)*4 + outputs.get(3)*8;
+			System.out.println(outputs.toString());
+			sum += Math.abs(S - total);
+		}
+		genome.fitness = sum;
+		if(currentPool.max_fitness < sum){
+			currentPool.max_fitness = sum;
+		}
+	}
+	
+	public void generate(){
+		currentPool.current_species = 0;
+		currentPool.current_genome = 0;
+		currentPool.max_fitness = 0;
+		while(true){
+			while(currentPool.fitness_measured()){
+				currentPool.nextGenome();
+			}
+			currentPool.run();
+			currentPool.nextGenome();
+		}
 	}
 	
 	
 	private God(){	
-		input_size = 7;
-		output_size = 3;
+		input_size = 8;
+		output_size = 4;
 
 		inputs = new ArrayList<Integer>();
-		outputs = new ArrayList<Integer>();
+		outputs = new ArrayList<Float>();
 		for(int i = 0; i < input_size;i++){
 			inputs.add(0);
 		}
 		for(int i = 0; i < output_size;i++){
-			outputs.add(0);
+			outputs.add(0.0f);
 		}
 		population = 300;
 		deltaDistjoint = 2;
@@ -102,7 +141,7 @@ public class God {
 		mutate_enable_chance = 0.2f;
 		timeOut = 20;
 		max_nodes = 1000000;
-		currentPool = new_pool();
+		currentPool = new Pool();
 	}
 
 	public static float sigma(float x){

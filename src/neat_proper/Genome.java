@@ -275,8 +275,10 @@ public class Genome {
 				candidate.add(gene);
 			}
 		}
-		Gene G = candidate.get((int)(Math.random() * candidate.size()));
-		G.enabled = !G.enabled;
+		if(candidate.size() > 0){
+			Gene G = candidate.get((int)(Math.random() * candidate.size()));
+			G.enabled = !G.enabled;
+		}
 	}
 	
 	public float distjoint(Genome other){

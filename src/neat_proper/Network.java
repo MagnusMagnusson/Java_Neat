@@ -8,16 +8,18 @@ public class Network {
 		neurons = new TreeMap<Integer,Neuron>();
 	}
 	
-	public List<Integer> evaluate(List<Integer> inputs){
+	public List<Float> evaluate(List<Integer> inputs){
 		inputs.add(1);
 		God god = God.instance();
 		if(inputs.size() != god.input_size + 1){
 			System.out.println("Error: Neural network recieved the wrong number of inputs.");
-			return new ArrayList<Integer>();
+			return new ArrayList<Float>();
 		}
 		
 		for(int i = 0; i < god.input_size + 1; i++){
-			neurons.get(i).value = inputs.get(i);
+			if(neurons.get(i) != null){
+				neurons.get(i).value = inputs.get(i);
+			}
 		}
 		Set<Integer> keys = neurons.keySet();
 		for(Integer k: keys){
@@ -33,14 +35,9 @@ public class Network {
 			}
 		}
 		
-		List<Integer> out = new ArrayList<Integer>();
-		for(int i = 1; i < god.output_size+1; i++){
-			if(neurons.get(god.output_size + i).value > 0){
-				out.add(1);
-			}
-			else{
-				out.add(0);
-			}
+		List<Float> out = new ArrayList<Float>();
+		for(int i = 1; i <= god.output_size; i++){
+			out.add(neurons.get(god.max_nodes + i).value);
 		}
 		return out;
 	}
